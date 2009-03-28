@@ -1,6 +1,0 @@
-setuptools
-Products.PloneFormGen
-Products.DataGridField
-
-[tests]
-zope.testing

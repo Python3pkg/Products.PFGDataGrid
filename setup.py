@@ -12,24 +12,11 @@ version = '0.1'
 
 long_description = (
     read('README.txt')
-    + '\n' +
+    + '\n\n' +
     'Change history\n'
     '**************\n'
-    + '\n' +
+    + '\n\n' +
     read('CHANGES.txt')
-    + '\n' +
-    'Detailed Documentation\n'
-    '**********************\n'
-    + '\n' +
-    read('Products', 'PFGDataGrid', 'README.txt')
-    + '\n' +
-    'Contributors\n'
-    '************\n'
-    + '\n' +
-    read('CONTRIBUTORS.txt')
-    + '\n' +
-    'Download\n'
-    '********\n'
     )
 
 tests_require=['zope.testing']
@@ -50,7 +37,7 @@ setup(name='Products.PFGDataGrid',
       author_email='steve@dcn.org',
       url='http://plone.org/products/ploneformgen',
       license='GPL',
-      packages=find_packages(exclude=['ez_setup']),
+      packages=find_packages(exclude=['ez_setup',]),
       namespace_packages=['Products', ],
       include_package_data=True,
       zip_safe=False,
@@ -58,16 +45,7 @@ setup(name='Products.PFGDataGrid',
                         'Products.PloneFormGen',
                         'Products.DataGridField',
                         ],
-      tests_require=tests_require,
-      extras_require=dict(tests=tests_require),
-      test_suite = 'Products.PFGDataGrid.tests.test_docs.test_suite',
       entry_points="""
       # -*- entry_points -*- 
-      [distutils.setup_keywords]
-      paster_plugins = setuptools.dist:assert_string_list
-
-      [egg_info.writers]
-      paster_plugins.txt = setuptools.command.egg_info:write_arg
       """,
-      paster_plugins = ["ZopeSkel"],
       )

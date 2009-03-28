@@ -1,17 +1,16 @@
-.. contents::
+Introduction
+============
 
-.. Note!
-   -----
-   Update the following URLs to point to your:
+PFGDataGrid
+***********
 
-   - code repository
-   - bug tracker
-   - questions/comments feedback mail
-   (do not set a real mail, to avoid spams)
+PFGDataGrid is an example of integrating a third-party Archetypes field/widget
+into PloneFormGen. It adds a DataGridField form field to PloneFormGen.
 
-   Or remove it if not used.
+Use the QuickInstaller to install it *after* installing both PloneFormGen and
+PFGDataGrid.
 
-- Code repository: http://svn.somewhere.com/...
-- Questions and comments to somemailing_list
-- Report bugs at http://bug.somewhere.com/..
+- Code repository: http://svn.plone.org/svn/collective/Products.PloneFormGen/fields/PFGDataGrid
+- Questions and comments to plone-users list
+- Report bugs at http://plone.org/products/ploneformgen/issues
 
