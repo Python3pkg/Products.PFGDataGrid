@@ -19,13 +19,10 @@ long_description = (
     read('CHANGES.txt')
     )
 
-tests_require=['zope.testing']
-
 setup(name='Products.PFGDataGrid',
       version=version,
       description="Data-grid Field for PloneFormGen",
       long_description=long_description,
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         'Framework :: Plone',
         'Intended Audience :: Developers',
@@ -41,10 +38,11 @@ setup(name='Products.PFGDataGrid',
       namespace_packages=['Products', ],
       include_package_data=True,
       zip_safe=False,
-      install_requires=['setuptools',
-                        'Products.PloneFormGen',
-                        'Products.DataGridField',
-                        ],
+      install_requires=[
+        'setuptools',
+        'Products.PloneFormGen',
+        'Products.DataGridField',
+        ],
       entry_points="""
       # -*- entry_points -*- 
       """,
