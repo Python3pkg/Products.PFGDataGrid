@@ -16,12 +16,21 @@ from Products.ATContentTypes.content.base import ATCTContent, ATContentTypeSchem
 from Products.ATContentTypes.content.folder import finalizeATCTSchema
 
 from Products.PFGDataGrid.config import *
+from Products.PFGDataGrid.vocabulary import SimpleDynamicVocabulary
 
 from Products.PloneFormGen.content import fieldsBase
+from Products.Archetypes.interfaces import IVocabulary
 
 from Products.DataGridField import \
-    DataGridField, DataGridWidget, Column
+    DataGridField, DataGridWidget, Column, SelectColumn
 
+try:
+    from Products.DataGridField import LinesColumn
+except ImportError:
+    # BBB - Released version of Products.DataGridField 1.7 will have LinesColumn
+    # SelectColumn and Vocabulary does not work if DGF < 1.7 is used, but we 
+    # don't want to fall on import errors
+    from Products.DataGridField import Column as LinesColumn
 
 class FormDataGridField(fieldsBase.BaseFormField):
     """
@@ -47,8 +56,8 @@ class FormDataGridField(fieldsBase.BaseFormField):
         DataGridField('columnDefs',
             searchable = False,
             required = True,
-            columns=('columnId','columnTitle','columnDefault'),                
-            default = [ {'columnId':'column1', 'columnTitle':'Column One', 'columnDefault':''}, ],
+            columns=('columnId','columnTitle','columnDefault','columnType', 'columnVocab'),
+            default = [ {'columnId':'column1', 'columnTitle':'Column One', 'columnDefault':'', 'columnType':'String', 'columnVocab':''}, ],
             widget = DataGridWidget(
                 label = 'Column Definitions',
                 i18n_domain = "pfgdatagrid",
@@ -63,6 +72,8 @@ class FormDataGridField(fieldsBase.BaseFormField):
                     'columnId':Column('Column Id'),
                     'columnTitle':Column('Column Title'),
                     'columnDefault':Column('Default Value'),
+                    'columnType':SelectColumn('Column Type', vocabulary='supportedColumnTypes'),
+                    'columnVocab':LinesColumn('Vocabulary (for Select col. only)'),
                 },
             ),
         ),
@@ -142,6 +153,10 @@ class FormDataGridField(fieldsBase.BaseFormField):
     # setColumnDefs is more complex because it's translating the
     # data from the columnDefs DataGrid for multiple uses.
 
+    security.declareProtected(View, 'supportedColumnTypes')
+    def supportedColumnTypes(self, **kw):
+        keys = SUPPORTED_COLUMN_TYPES_MAPPING.keys()
+        return DisplayList([(key, key) for key in keys])
 
     security.declareProtected(ModifyPortalContent, 'setColumnDefs')
     def setColumnDefs(self, value, **kwa):
@@ -153,7 +168,12 @@ class FormDataGridField(fieldsBase.BaseFormField):
         
         res = {}
         for col in myval:
-            res[ col['columnId'] ] = Column( col['columnTitle'], default=col['columnDefault'] )
+            klass = SUPPORTED_COLUMN_TYPES_MAPPING.get(col['columnType'], None)
+            if klass is not None:
+                if col['columnType'] == 'Select':
+                    res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=SimpleDynamicVocabulary(col['columnVocab']))
+                else:
+                    res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'] )
         self.fgField.widget.columns = res
         
 
