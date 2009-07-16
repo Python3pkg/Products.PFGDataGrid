@@ -138,7 +138,7 @@ class FormDataGridField(fieldsBase.BaseFormField):
         """ initialize class """
 
         fieldsBase.BaseFormField.__init__(self, oid, **kwargs)
-        import pdb ; pdb.set_trace( )
+
         # set a preconfigured field as an instance attribute
         self.fgField = DataGridField('fg_datagrid_field',
             searchable=False,
