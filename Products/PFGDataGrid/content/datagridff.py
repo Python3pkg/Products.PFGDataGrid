@@ -32,6 +32,12 @@ except ImportError:
     # don't want to fall on import errors
     from Products.DataGridField import Column as LinesColumn
 
+# Make sure columnDefs and self.fgFields in __init__ uses the same number of 
+# columns. If they are different you may fall into trouble if adding new columns
+# here during product update (ZODB can't read old object as soon as object
+# is accessed first time)
+LIST_OF_COLUMNS = ('columnId','columnTitle','columnDefault','columnType', 'columnVocab')
+
 class FormDataGridField(fieldsBase.BaseFormField):
     """
         A PloneFormGen Form Field
@@ -56,7 +62,7 @@ class FormDataGridField(fieldsBase.BaseFormField):
         DataGridField('columnDefs',
             searchable = False,
             required = True,
-            columns=('columnId','columnTitle','columnDefault','columnType', 'columnVocab'),
+            columns=LIST_OF_COLUMNS,
             default = [ {'columnId':'column1', 'columnTitle':'Column One', 'columnDefault':'', 'columnType':'String', 'columnVocab':''}, ],
             widget = DataGridWidget(
                 label = 'Column Definitions',
@@ -138,7 +144,7 @@ class FormDataGridField(fieldsBase.BaseFormField):
             required=False,
             write_permission = View,
             widget = DataGridWidget(),
-            columns=('column1','column2','The third'),                
+            columns=LIST_OF_COLUMNS,
             allow_delete = True,
             allow_insert = True,
             allow_reorder = True,
