@@ -36,6 +36,7 @@ except ImportError:
 # columns. If they are different you may fall into trouble if adding new columns
 # here during product update (ZODB can't read old object as soon as object
 # is accessed first time)
+# FIXME - that is bad, this did not fixed this issue :(
 LIST_OF_COLUMNS = ('columnId','columnTitle','columnDefault','columnType', 'columnVocab')
 
 class FormDataGridField(fieldsBase.BaseFormField):
@@ -137,7 +138,7 @@ class FormDataGridField(fieldsBase.BaseFormField):
         """ initialize class """
 
         fieldsBase.BaseFormField.__init__(self, oid, **kwargs)
-
+        import pdb ; pdb.set_trace( )
         # set a preconfigured field as an instance attribute
         self.fgField = DataGridField('fg_datagrid_field',
             searchable=False,
