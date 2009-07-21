@@ -24,19 +24,8 @@ from Products.Archetypes.interfaces import IVocabulary
 from Products.DataGridField import \
     DataGridField, DataGridWidget, Column, SelectColumn
 
-try:
-    from Products.DataGridField import LinesColumn
-except ImportError:
-    # BBB - Released version of Products.DataGridField 1.7 will have LinesColumn
-    # SelectColumn and Vocabulary does not work if DGF < 1.7 is used, but we 
-    # don't want to fall on import errors
-    from Products.DataGridField import Column as LinesColumn
+from Products.DataGridField import LinesColumn
 
-# Make sure columnDefs and self.fgFields in __init__ uses the same number of 
-# columns. If they are different you may fall into trouble if adding new columns
-# here during product update (ZODB can't read old object as soon as object
-# is accessed first time)
-# FIXME - that is bad, this did not fixed this issue :(
 LIST_OF_COLUMNS = ('columnId','columnTitle','columnDefault','columnType', 'columnVocab')
 
 class FormDataGridField(fieldsBase.BaseFormField):
@@ -269,16 +258,21 @@ class FormDataGridField(fieldsBase.BaseFormField):
             titles[col['columnId']] = col['columnTitle']
 
         value = REQUEST.form.get(self.__name__, 'No Input')
-        
-        res = "<dl>"
+
+        header = ''
+        for col in self.columnDefs:
+            header += "<th>%s</th>" % col['columnTitle']
+
+        res = '<table class="listing"><thead><tr>%s</tr></thead><tbody>' % header
         for adict in value:
             if adict.get('orderindex_', '') != 'template_row_marker':
+                res += "<tr>"
                 for akey in adict.keys():
                     if akey != 'orderindex_':
-                        res = "%s\n<dt>%s</dt>\n<dd>%s<dd>" % \
-                         (res, cgi.escape(titles[akey]), cgi.escape(adict[akey]))
-        return "%s</dl>" % res
-    
+                        res = "%s\n<td>%s</td>" % (res, cgi.escape(adict[akey]))
+                res += "</tr>"
+                    
+        return "%s</tbody></table>" % res
 
     
 registerType(FormDataGridField, PROJECTNAME)
