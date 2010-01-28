@@ -252,11 +252,6 @@ class FormDataGridField(fieldsBase.BaseFormField):
         """ return from REQUEST, this field's value in html.
         """
 
-        # get column titles
-        titles = {}
-        for col in self.columnDefs:
-            titles[col['columnId']] = col['columnTitle']
-
         value = REQUEST.form.get(self.__name__, 'No Input')
 
         header = ''
@@ -267,9 +262,9 @@ class FormDataGridField(fieldsBase.BaseFormField):
         for adict in value:
             if adict.get('orderindex_', '') != 'template_row_marker':
                 res += "<tr>"
-                for akey in adict.keys():
-                    if akey != 'orderindex_':
-                        res = "%s\n<td>%s</td>" % (res, cgi.escape(adict[akey]))
+                for col in self.columnDefs:
+                    akey = col['columnId']
+                    res = "%s\n<td>%s</td>" % (res, cgi.escape(adict[akey]))
                 res += "</tr>"
                     
         return "%s</tbody></table>" % res
