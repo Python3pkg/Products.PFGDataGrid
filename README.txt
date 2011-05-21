@@ -2,7 +2,7 @@ Introduction
 ============
 
 PFGDataGrid
-***********
+-----------
 
 PFGDataGrid is an example of integrating a third-party Archetypes field/widget
 into PloneFormGen. It adds a DataGridField form field to PloneFormGen.

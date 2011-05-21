@@ -7,6 +7,12 @@ except ImportError:
     HAS_PLONE30 = False
 else:
     HAS_PLONE30 = True
+    
+try:
+    from plone.app.upgrade import v40
+    HAS_PLONE4 = True
+except:
+    HAS_PLONE4 = False
 
 from Products.CMFCore.utils import getToolByName
 
@@ -21,7 +27,7 @@ def install(self):
     print >> out, "Installing PFGDataGrid"
     setup_tool = getToolByName(self, 'portal_setup')
 
-    if HAS_PLONE30:
+    if HAS_PLONE30 or HAS_PLONE4:
         setup_tool.runAllImportStepsFromProfile(
                 "profile-Products.PFGDataGrid:default",
                 purge_old=False)
