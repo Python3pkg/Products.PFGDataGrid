@@ -176,7 +176,6 @@ class FormDataGridField(fieldsBase.BaseFormField):
                         res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=vocab)
                     else:
                         res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=SimpleDynamicVocabulary([])
-                                )
                 elif col['columnType'] == 'DynamicVocabulary':
                     view_name = col['columnVocab'][0]
                     res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=view_name)
