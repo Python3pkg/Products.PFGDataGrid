@@ -168,6 +168,18 @@ class FormDataGridField(fieldsBase.BaseFormField):
             if klass is not None:
                 if col['columnType'] == 'Select':
                     res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=SimpleDynamicVocabulary(col['columnVocab']))
+                elif col['columnType'] == 'SelectVocabulary':
+                    view_name = col['columnVocab'][0]
+                    view = self.restrictedTraverse(view_name, None)
+                    if view is not None:
+                        vocab = view()
+                        res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=vocab)
+                    else:
+                        res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=SimpleDynamicVocabulary([])
+                                )
+                elif col['columnType'] == 'DynamicVocabulary':
+                    view_name = col['columnVocab'][0]
+                    res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=view_name)
                 else:
                     res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'] )
         self.fgField.widget.columns = res

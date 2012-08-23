@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.3
+---
+
+- added DynamicVocabulary and SelectVocabulary column types
+  [ajung]
+
 0.2
 ---
 
