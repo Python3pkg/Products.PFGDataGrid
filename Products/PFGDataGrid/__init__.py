@@ -14,6 +14,7 @@ from Products.CMFCore.permissions import setDefaultRoles
 
 PFGDataGridMessageFactory = MessageFactory('Products.PFGDataGrid')
 
+
 def initialize(context):
     """Initializer called when used as a Zope 2 product.
 
@@ -43,8 +44,9 @@ def initialize(context):
     # in the GenericSetup profile.
 
     for atype, constructor in zip(content_types, constructors):
-        utils.ContentInit('%s: %s' % (config.PROJECTNAME, atype.portal_type),
-            content_types      = (atype,),
-            permission         = config.ADD_CONTENT_PERMISSION,
-            extra_constructors = (constructor,),
-            ).initialize(context)
+        utils.ContentInit(
+            '%s: %s' % (config.PROJECTNAME, atype.portal_type),
+            content_types=(atype,),
+            permission=config.ADD_CONTENT_PERMISSION,
+            extra_constructors=(constructor,),
+        ).initialize(context)

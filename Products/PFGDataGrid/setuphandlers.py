@@ -3,21 +3,22 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_hasattr
 from Products.Archetypes.public import listTypes
 
+
 def importVarious(context):
     """
     Final PFGDataGrid import steps.
     """
-    
+
     # Only run step if a flag file is present (e.g. not an extension profile)
     if context.readDataFile('pfgdatagrid-various.txt') is None:
         return
-    
+
     site = context.getSite()
 
     #######################
-    # Both PloneFormGen and the target field provider are going to have to be installed
-    # first. So, let's check.
-    
+    # Both PloneFormGen and the target field provider are going to have
+    # to be installed first. So, let's check.
+
     portal_skins = getToolByName(site, 'portal_skins')
     assert safe_hasattr(portal_skins, 'DataGridWidget'), "DataGridField must be installed prior to installing this product."
     assert safe_hasattr(portal_skins, 'PloneFormGen'), "PloneFormGen must be installed prior to installing this product."
@@ -32,5 +33,5 @@ def importVarious(context):
         ptType = portal_types.getTypeInfo(typeName)
         ffact = list(ptType.allowed_content_types)
         ffact += myTypes
-        ptType.manage_changeProperties(allowed_content_types = ffact)
+        ptType.manage_changeProperties(allowed_content_types=ffact)
     # return ["Added %s to allowed_content_types for %s" % (', '.join(myTypes), typeName),]

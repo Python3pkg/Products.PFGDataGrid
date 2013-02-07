@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.3.3 (development)
+-------------------
+
+- PEP8 and pyflakes cleanup
+  [jcerjak]
+
 0.3
 ---
 
