@@ -159,7 +159,15 @@ class FormDataGridField(fieldsBase.BaseFormField):
     def setColumnDefs(self, value, **kwa):
         """ mutator for columnDefs """
 
-        myval = [col for col in value if col.get('columnId')]
+        try:
+            myval = [col for col in value if col.get('columnId')]
+        except AttributeError:
+            # When importing PloneFormGen form TTW via "Actions -> Import",
+            # value is a string, we need to convert it to a list first.
+            # XXX: maybe this should be fixed elsewhere?
+            value = [eval(val) for val in value.split('\n')]
+            myval = [col for col in value if col.get('columnId')]
+
         self.columnDefs = myval
         self.fgField.columns = [col['columnId'] for col in myval]
 
