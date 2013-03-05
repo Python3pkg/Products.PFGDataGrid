@@ -4,15 +4,15 @@ __author__ = 'Steve McMahon <steve@dcn.org>'
 __docformat__ = 'plaintext'
 
 import cgi
+import json
+
 from types import BooleanType
 
 from AccessControl import ClassSecurityInfo
-
-from Products.CMFCore.permissions import View, ModifyPortalContent
-
 from Products.Archetypes.public import *
 from Products.ATContentTypes.content.folder import finalizeATCTSchema
 from Products.PloneFormGen.content import fieldsBase
+from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.DataGridField import DataGridField
 from Products.DataGridField import DataGridWidget
 from Products.DataGridField import Column
@@ -165,7 +165,11 @@ class FormDataGridField(fieldsBase.BaseFormField):
             # When importing PloneFormGen form TTW via "Actions -> Import",
             # value is a string, we need to convert it to a list first.
             # XXX: maybe this should be fixed elsewhere?
-            value = [eval(val) for val in value.split('\n')]
+
+            # replace single quotes with double quotes so json.loads doesn't
+            # complain
+            value = value.replace("'", '"')
+            value = [json.loads(val) for val in value.split('\n')]
             myval = [col for col in value if col.get('columnId')]
 
         self.columnDefs = myval
