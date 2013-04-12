@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.3.3 (development)
+-------------------
+
+- fix setColumnDefs to make PFG form import work
+  [jcerjak]
+
+- PEP8 and pyflakes cleanup
+  [jcerjak]
+
 0.3
 ---
 

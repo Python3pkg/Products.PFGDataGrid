@@ -1,40 +1,37 @@
 """DataGridFF -- a PloneFormGen form field built on DataGridField"""
 
-__author__  = 'Steve McMahon <steve@dcn.org>'
+__author__ = 'Steve McMahon <steve@dcn.org>'
 __docformat__ = 'plaintext'
 
 import cgi
+import json
+
 from types import BooleanType
 
 from AccessControl import ClassSecurityInfo
-
-from Products.CMFCore.permissions import View, ModifyPortalContent
-
 from Products.Archetypes.public import *
-
-from Products.ATContentTypes.content.base import ATCTContent, ATContentTypeSchema
 from Products.ATContentTypes.content.folder import finalizeATCTSchema
+from Products.PloneFormGen.content import fieldsBase
+from Products.CMFCore.permissions import View, ModifyPortalContent
+from Products.DataGridField import DataGridField
+from Products.DataGridField import DataGridWidget
+from Products.DataGridField import Column
+from Products.DataGridField import SelectColumn
+from Products.DataGridField import LinesColumn
 
 from Products.PFGDataGrid.config import *
 from Products.PFGDataGrid.vocabulary import SimpleDynamicVocabulary
 
-from Products.PloneFormGen.content import fieldsBase
-from Products.Archetypes.interfaces import IVocabulary
+LIST_OF_COLUMNS = (
+    'columnId', 'columnTitle', 'columnDefault', 'columnType', 'columnVocab')
 
-from Products.DataGridField import \
-    DataGridField, DataGridWidget, Column, SelectColumn
-
-from Products.DataGridField import LinesColumn
-
-LIST_OF_COLUMNS = ('columnId','columnTitle','columnDefault','columnType', 'columnVocab')
 
 class FormDataGridField(fieldsBase.BaseFormField):
     """
         A PloneFormGen Form Field
     """
 
-    security  = ClassSecurityInfo()
-
+    security = ClassSecurityInfo()
 
     #######################
     # We could derive our schema from several schema defined in
@@ -50,26 +47,33 @@ class FormDataGridField(fieldsBase.BaseFormField):
         # We'll make DataGridField eat its own dog food by using it
         # to get our column definitions and defaults.
         DataGridField('columnDefs',
-            searchable = False,
-            required = True,
+            searchable=False,
+            required=True,
             columns=LIST_OF_COLUMNS,
-            default = [ {'columnId':'column1', 'columnTitle':'Column One', 'columnDefault':'', 'columnType':'String', 'columnVocab':''}, ],
-            widget = DataGridWidget(
-                label = 'Column Definitions',
-                i18n_domain = "pfgdatagrid",
-                label_msgid = "label_column_defs_text",
-                description = """
+            default=[{
+                'columnId':'column1',
+                'columnTitle':'Column One',
+                'columnDefault':'',
+                'columnType':'String',
+                'columnVocab':''}, ],
+            widget=DataGridWidget(
+                label='Column Definitions',
+                i18n_domain="pfgdatagrid",
+                label_msgid="label_column_defs_text",
+                description="""
                     Specify a unique identifier and a title for each column
                     you wish to appear in the datagrid. The default value
                     is optional.
                 """,
-                description_msgid = "help_column_defs_text",
+                description_msgid="help_column_defs_text",
                 columns={
-                    'columnId':Column('Column Id'),
-                    'columnTitle':Column('Column Title'),
-                    'columnDefault':Column('Default Value'),
-                    'columnType':SelectColumn('Column Type', vocabulary='supportedColumnTypes'),
-                    'columnVocab':LinesColumn('Vocabulary (for Select col. only)'),
+                    'columnId': Column('Column Id'),
+                    'columnTitle': Column('Column Title'),
+                    'columnDefault': Column('Default Value'),
+                    'columnType': SelectColumn(
+                        'Column Type', vocabulary='supportedColumnTypes'),
+                    'columnVocab': LinesColumn(
+                        'Vocabulary (for Select col. only)'),
                 },
             ),
         ),
@@ -77,52 +81,51 @@ class FormDataGridField(fieldsBase.BaseFormField):
         # mutator and accessor methods that tie these
         # to values in the widget
         BooleanField('allowDelete',
-            searchable = False,
-            default = '1',
-            widget = BooleanWidget(
-                label = 'Allow Row Deletion',
-                i18n_domain = "pfgdatagrid",
-                label_msgid = "label_allow_delete_text",
+            searchable=False,
+            default='1',
+            widget=BooleanWidget(
+                label='Allow Row Deletion',
+                i18n_domain="pfgdatagrid",
+                label_msgid="label_allow_delete_text",
             ),
         ),
         BooleanField('allowInsert',
-            searchable = False,
-            default = '1',
-            widget = BooleanWidget(
-                label = 'Allow Row Insertion',
-                i18n_domain = "pfgdatagrid",
-                label_msgid = "label_allow_insert_text",
+            searchable=False,
+            default='1',
+            widget=BooleanWidget(
+                label='Allow Row Insertion',
+                i18n_domain="pfgdatagrid",
+                label_msgid="label_allow_insert_text",
             ),
         ),
         BooleanField('allowReorder',
-            searchable = False,
-            default = '1',
-            widget = BooleanWidget(
-                label = 'Allow Row Reordering',
-                i18n_domain = "pfgdatagrid",
-                label_msgid = "label_allow_reorder_text",
+            searchable=False,
+            default='1',
+            widget=BooleanWidget(
+                label='Allow Row Reordering',
+                i18n_domain="pfgdatagrid",
+                label_msgid="label_allow_reorder_text",
             ),
         ),
 
     ))
     finalizeATCTSchema(schema, folderish=True, moveDiscussion=False)
 
-    content_icon   = 'BasicField.gif'
+    content_icon = 'BasicField.gif'
 
-    meta_type      = \
-    portal_type    = 'FormDataGridField'
+    meta_type = \
+    portal_type = 'FormDataGridField'
     archetype_name = 'DataGrid Field'
 
-    typeDescription= 'A flexible datagrid field.'
-    typeDescMsgId  = 'datagridformfield_description'
-
+    typeDescription = 'A flexible datagrid field.'
+    typeDescMsgId = 'datagridformfield_description'
 
     #######################
     # Every form field must have an fgField attribute that is a field
     # definition created outside of the normal schema.
     # Since this needs to be an instance attribute, we'll set it up
     # in the __init__ method.
-    
+
     def __init__(self, oid, **kwargs):
         """ initialize class """
 
@@ -132,15 +135,13 @@ class FormDataGridField(fieldsBase.BaseFormField):
         self.fgField = DataGridField('fg_datagrid_field',
             searchable=False,
             required=False,
-            write_permission = View,
-            widget = DataGridWidget(),
+            write_permission=View,
+            widget=DataGridWidget(),
             columns=LIST_OF_COLUMNS,
-            allow_delete = True,
-            allow_insert = True,
-            allow_reorder = True,
-            )
-
-
+            allow_delete=True,
+            allow_insert=True,
+            allow_reorder=True,
+        )
 
     #######################
     # Mutators and accessors that tie items in the form field's
@@ -158,31 +159,55 @@ class FormDataGridField(fieldsBase.BaseFormField):
     def setColumnDefs(self, value, **kwa):
         """ mutator for columnDefs """
 
-        myval = [col for col in value if col.get('columnId')]        
+        try:
+            myval = [col for col in value if col.get('columnId')]
+        except AttributeError:
+            # When importing PloneFormGen form TTW via "Actions -> Import",
+            # value is a string, we need to convert it to a list first.
+            # XXX: maybe this should be fixed elsewhere?
+
+            # replace single quotes with double quotes so json.loads doesn't
+            # complain
+            value = value.replace("'", '"')
+            value = [json.loads(val) for val in value.split('\n')]
+            myval = [col for col in value if col.get('columnId')]
+
         self.columnDefs = myval
         self.fgField.columns = [col['columnId'] for col in myval]
-        
+
         res = {}
         for col in myval:
             klass = SUPPORTED_COLUMN_TYPES_MAPPING.get(col['columnType'], None)
             if klass is not None:
                 if col['columnType'] == 'Select':
-                    res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=SimpleDynamicVocabulary(col['columnVocab']))
+                    res[col['columnId']] = klass(
+                        col['columnTitle'],
+                        default=col['columnDefault'],
+                        vocabulary=SimpleDynamicVocabulary(col['columnVocab']))
                 elif col['columnType'] == 'SelectVocabulary':
                     view_name = col['columnVocab'][0]
                     view = self.restrictedTraverse(view_name, None)
                     if view is not None:
                         vocab = view()
-                        res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=vocab)
+                        res[col['columnId']] = klass(
+                            col['columnTitle'],
+                            default=col['columnDefault'],
+                            vocabulary=vocab)
                     else:
-                        res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=SimpleDynamicVocabulary([]))
+                        res[col['columnId']] = klass(
+                            col['columnTitle'],
+                            default=col['columnDefault'],
+                            vocabulary=SimpleDynamicVocabulary([]))
                 elif col['columnType'] == 'DynamicVocabulary':
                     view_name = col['columnVocab'][0]
-                    res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'], vocabulary=view_name)
+                    res[col['columnId']] = klass(
+                        col['columnTitle'],
+                        default=col['columnDefault'],
+                        vocabulary=view_name)
                 else:
-                    res[ col['columnId'] ] = klass( col['columnTitle'], default=col['columnDefault'] )
+                    res[col['columnId']] = klass(
+                        col['columnTitle'], default=col['columnDefault'] )
         self.fgField.widget.columns = res
-        
 
     security.declareProtected(ModifyPortalContent, 'setAllowDelete')
     def setAllowDelete(self, value, **kwa):
@@ -193,13 +218,11 @@ class FormDataGridField(fieldsBase.BaseFormField):
         else:
             self.fgField.allow_delete = value == '1'
 
-
     security.declareProtected(View, 'getAllowDelete')
     def getAllowDelete(self, **kw):
         """ get allow_delete flag for field """
 
         return self.fgField.allow_delete
-
 
     security.declareProtected(ModifyPortalContent, 'setAllowInsert')
     def setAllowInsert(self, value, **kwa):
@@ -210,13 +233,11 @@ class FormDataGridField(fieldsBase.BaseFormField):
         else:
             self.fgField.allow_insert = value == '1'
 
-
     security.declareProtected(View, 'getAllowInsert')
     def getAllowInsert(self, **kw):
         """ get allow_insert flag for field """
 
         return self.fgField.allow_insert
-
 
     security.declareProtected(ModifyPortalContent, 'setAllowReorder')
     def setAllowReorder(self, value, **kwa):
@@ -227,13 +248,11 @@ class FormDataGridField(fieldsBase.BaseFormField):
         else:
             self.fgField.allow_reorder = value == '1'
 
-
     security.declareProtected(View, 'getAllowReorder')
     def getAllowReorder(self, **kw):
         """ get allow_reorder flag for field """
 
         return self.fgField.allow_reorder
-
 
     #######################
     # Due to the very-specific nature of the DataGridField
@@ -244,7 +263,7 @@ class FormDataGridField(fieldsBase.BaseFormField):
     def getFgDefault(self, **kwargs):
         """
          supply defaults for fgField datagrid as a list
-         with a single dictionary 
+         with a single dictionary
         """
 
         res = {}
@@ -252,7 +271,6 @@ class FormDataGridField(fieldsBase.BaseFormField):
             if col.get('columnId'):
                 res[col['columnId']] = col['columnDefault']
         return [res]
-    
 
     #######################
     # The string representation of the DataGridField value isn't suitable
@@ -277,9 +295,8 @@ class FormDataGridField(fieldsBase.BaseFormField):
                     akey = col['columnId']
                     res = "%s\n<td>%s</td>" % (res, cgi.escape(adict[akey]))
                 res += "</tr>"
-                    
+
         return "%s</tbody></table>" % res
 
-    
-registerType(FormDataGridField, PROJECTNAME)
 
+registerType(FormDataGridField, PROJECTNAME)
