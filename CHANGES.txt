@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.3.3 (development)
--------------------
+0.3.3 (2013-08-21)
+------------------
 
 - fix setColumnDefs to make PFG form import work
   [jcerjak]
