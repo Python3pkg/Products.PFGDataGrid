@@ -22,6 +22,8 @@ from Products.DataGridField import LinesColumn
 from Products.PFGDataGrid.config import *
 from Products.PFGDataGrid.vocabulary import SimpleDynamicVocabulary
 
+from zope.contenttype import guess_content_type
+
 LIST_OF_COLUMNS = (
     'columnId', 'columnTitle', 'columnDefault', 'columnType', 'columnVocab')
 
@@ -293,7 +295,16 @@ class FormDataGridField(fieldsBase.BaseFormField):
                 res += "<tr>"
                 for col in self.columnDefs:
                     akey = col['columnId']
-                    res = "%s\n<td>%s</td>" % (res, cgi.escape(adict[akey]))
+                    if col['columnType'] == "File":
+                        file = adict[akey]
+                        file.seek(0)
+                        fdata = file.read()
+                        filename = file.filename
+                        mimetype, enc = guess_content_type(filename, fdata, None)
+                        out = "%s %s: %s bytes" % (filename, mimetype, len(fdata))
+                        res = "%s\n<td>%s</td>" % (res, cgi.escape(out))
+                    else:
+                        res = "%s\n<td>%s</td>" % (res, cgi.escape(adict[akey]))
                 res += "</tr>"
 
         return "%s</tbody></table>" % res
