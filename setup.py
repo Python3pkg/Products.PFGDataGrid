@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-version = '0.3.4.dev0'
+version = '0.4'
 
 long_description = (
     read('README.txt')
@@ -44,7 +44,7 @@ setup(
     install_requires=[
         'setuptools',
         'Products.PloneFormGen',
-        'Products.DataGridField',
+        'Products.DataGridField >= 1.9.1',
     ],
     entry_points="""
     # -*- entry_points -*-
