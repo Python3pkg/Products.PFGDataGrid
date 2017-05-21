@@ -17,7 +17,7 @@ except:
 
 from Products.CMFCore.utils import getToolByName
 
-from StringIO import StringIO
+from io import StringIO
 
 
 def install(self):
@@ -26,7 +26,7 @@ def install(self):
     """
     out = StringIO()
 
-    print >> out, "Installing PFGDataGrid"
+    print("Installing PFGDataGrid", file=out)
     setup_tool = getToolByName(self, 'portal_setup')
 
     if HAS_PLONE30 or HAS_PLONE4:

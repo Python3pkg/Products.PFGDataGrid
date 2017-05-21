@@ -154,7 +154,7 @@ class FormDataGridField(fieldsBase.BaseFormField):
 
     security.declareProtected(View, 'supportedColumnTypes')
     def supportedColumnTypes(self, **kw):
-        keys = SUPPORTED_COLUMN_TYPES_MAPPING.keys()
+        keys = list(SUPPORTED_COLUMN_TYPES_MAPPING.keys())
         return DisplayList([(key, key) for key in keys])
 
     security.declareProtected(ModifyPortalContent, 'setColumnDefs')

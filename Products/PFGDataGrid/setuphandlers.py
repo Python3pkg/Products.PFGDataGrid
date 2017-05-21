@@ -1,4 +1,4 @@
-import config
+from . import config
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_hasattr
 from Products.Archetypes.public import listTypes
